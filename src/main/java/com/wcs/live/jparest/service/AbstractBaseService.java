@@ -22,6 +22,7 @@ public abstract class AbstractBaseService<T extends BaseModel> implements BaseSe
     @Override
     public T create(T model) {
 
+
         // generate uuids when needed
         if (model.getUuid() == null) {
             model.setUuid(UUID.randomUUID());

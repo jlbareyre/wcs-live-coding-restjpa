@@ -1,8 +1,10 @@
 package com.wcs.live.jparest.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+
+import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Player extends BaseModel {
@@ -12,10 +14,21 @@ public class Player extends BaseModel {
 
     private ZonedDateTime birthDate;
 
-    @Column(name="player_rank", nullable = false)
+    @Column(name = "player_rank", nullable = false)
     private int rank;
     private int wins;
     private int losses;
+
+    @Embedded
+    private Address address;
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private List<Achievement> achievements = new ArrayList<>();
+
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "team_id")
+//    private Team team;
 
     public String getFirstName() {
         return firstName;
@@ -54,4 +67,22 @@ public class Player extends BaseModel {
         this.losses = losses;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    public List<Achievement> getAchievements() {
+        return achievements;
+    }
+    public void setAchievements(List<Achievement> achievements) {
+        this.achievements = achievements;
+    }
+//    public Team getTeam() {
+//        return team;
+//    }
+//    public void setTeam(Team team) {
+//        this.team = team;
+//    }
 }
