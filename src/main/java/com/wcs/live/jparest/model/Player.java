@@ -1,10 +1,12 @@
 package com.wcs.live.jparest.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Player extends BaseModel {
@@ -26,9 +28,29 @@ public class Player extends BaseModel {
     @Enumerated(EnumType.STRING)
     private List<Achievement> achievements = new ArrayList<>();
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "team_id")
-//    private Team team;
+    @ManyToMany
+    @JoinTable(
+            name = "team_player",
+            joinColumns = @JoinColumn(name = "playerUuid"),
+            inverseJoinColumns = @JoinColumn(name = "teamUuid")
+    )
+    @JsonIgnore
+    private Set<Team> teams = new HashSet<>();
+
+    @Transient
+    private Set<UUID> teamUuids = new HashSet<>();
+
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    private void loadTeamsUuids() {
+        teamUuids = getTeams()
+                .stream()
+                .map(p -> p.getUuid())
+                .collect(Collectors.toSet());
+    }
+
 
     public String getFirstName() {
         return firstName;
@@ -79,10 +101,16 @@ public class Player extends BaseModel {
     public void setAchievements(List<Achievement> achievements) {
         this.achievements = achievements;
     }
-//    public Team getTeam() {
-//        return team;
-//    }
-//    public void setTeam(Team team) {
-//        this.team = team;
-//    }
+    public Set<Team> getTeams() {
+        return teams;
+    }
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
+    public Set<UUID> getTeamUuids() {
+        return teamUuids;
+    }
+    public void setTeamUuids(Set<UUID> teamUuids) {
+        this.teamUuids = teamUuids;
+    }
 }

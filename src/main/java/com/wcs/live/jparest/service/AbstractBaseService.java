@@ -45,7 +45,10 @@ public abstract class AbstractBaseService<T extends BaseModel> implements BaseSe
         }
 
         // update
-        else return getDao().save(model);
+        else {
+            T savedModel = getDao().save(model);
+            return savedModel;
+        }
     }
 
     @Override

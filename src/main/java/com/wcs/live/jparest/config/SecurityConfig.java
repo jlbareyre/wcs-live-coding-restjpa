@@ -49,10 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 // configure routes access
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .anyRequest().authenticated()
-                .and()
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+//                .anyRequest().authenticated()
+//                .and()
 
                 // add auth filters
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), appConfig))
