@@ -28,6 +28,7 @@ public class PlayerController {
     @GetMapping("/players/{uuid}")
     @ResponseBody
     public Player get(@PathVariable UUID uuid) {
+
         return service
                 .find(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "could not find player with uuid> " + uuid));
@@ -37,6 +38,11 @@ public class PlayerController {
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
     public Player create(@RequestBody Player player) {
+        if (player.getAddress() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "missing address");
+        if (player.getAddress().getCity() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "missing address.city");
+        if (player.getAddress().getLine1() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "missing address.line1");
+        if (player.getAddress().getLine2() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "missing address.line2");
+
         return service.create(player);
     }
 

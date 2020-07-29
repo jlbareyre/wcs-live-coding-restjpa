@@ -22,6 +22,7 @@ public abstract class AbstractBaseService<T extends BaseModel> implements BaseSe
     @Override
     public T create(T model) {
 
+
         // generate uuids when needed
         if (model.getUuid() == null) {
             model.setUuid(UUID.randomUUID());
@@ -44,7 +45,10 @@ public abstract class AbstractBaseService<T extends BaseModel> implements BaseSe
         }
 
         // update
-        else return getDao().save(model);
+        else {
+            T savedModel = getDao().save(model);
+            return savedModel;
+        }
     }
 
     @Override

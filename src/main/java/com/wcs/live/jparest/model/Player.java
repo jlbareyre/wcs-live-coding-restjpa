@@ -1,8 +1,12 @@
 package com.wcs.live.jparest.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Player extends BaseModel {
@@ -12,10 +16,41 @@ public class Player extends BaseModel {
 
     private ZonedDateTime birthDate;
 
-    @Column(name="player_rank", nullable = false)
+    @Column(name = "player_rank", nullable = false)
     private int rank;
     private int wins;
     private int losses;
+
+    @Embedded
+    private Address address;
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private List<Achievement> achievements = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "team_player",
+            joinColumns = @JoinColumn(name = "playerUuid"),
+            inverseJoinColumns = @JoinColumn(name = "teamUuid")
+    )
+    @JsonIgnore
+    private Set<Team> teams = new HashSet<>();
+
+    @Transient
+    private Set<UUID> teamUuids = new HashSet<>();
+
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    private void loadTeamsUuids() {
+        teamUuids = getTeams()
+                .stream()
+                .map(p -> p.getUuid())
+                .collect(Collectors.toSet());
+    }
+
 
     public String getFirstName() {
         return firstName;
@@ -54,4 +89,28 @@ public class Player extends BaseModel {
         this.losses = losses;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    public List<Achievement> getAchievements() {
+        return achievements;
+    }
+    public void setAchievements(List<Achievement> achievements) {
+        this.achievements = achievements;
+    }
+    public Set<Team> getTeams() {
+        return teams;
+    }
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
+    public Set<UUID> getTeamUuids() {
+        return teamUuids;
+    }
+    public void setTeamUuids(Set<UUID> teamUuids) {
+        this.teamUuids = teamUuids;
+    }
 }
